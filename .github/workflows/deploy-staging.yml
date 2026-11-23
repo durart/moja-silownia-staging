@@ -1,0 +1,45 @@
+name: Publish isolated Moja Silownia staging
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: staging-pages
+  cancel-in-progress: false
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Progress 3 feature branch
+        uses: actions/checkout@v4
+        with:
+          repository: durart/moja-silownia
+          ref: feature/progress-3-foundation-20261123
+          persist-credentials: false
+      - name: Verify and prepare isolated staging site
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f index.html
+          test -f progress-core-v2.js
+          test -f progress-ui-v2.js
+          node --check progress-core-v2.js
+          node --check progress-ui-v2.js
+          node --test tests/progress-v2.test.cjs
+          mkdir -p "$RUNNER_TEMP/staging-site"
+          tar --exclude=.git --exclude=.github --exclude=tests --exclude=node_modules -cf - . | tar -xf - -C "$RUNNER_TEMP/staging-site"
+          printf '%s\n' 'STAGING ONLY - Progress 3.0' > "$RUNNER_TEMP/staging-site/STAGING.txt"
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ runner.temp }}/staging-site
+      - name: Deploy staging to separate repository Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
