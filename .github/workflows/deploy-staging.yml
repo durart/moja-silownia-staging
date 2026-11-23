@@ -32,7 +32,7 @@ jobs:
           test -f progress-ui-v2.js
           node --check progress-core-v2.js
           node --check progress-ui-v2.js
-          node --test tests/progress-v2.test.cjs tests/storage-regression.test.mjs tests/service-worker.test.mjs tests/es-modules-stage2.test.mjs
+          node --test tests/*.test.cjs tests/*.test.mjs
           mkdir -p "$RUNNER_TEMP/staging-site"
           tar --exclude=.git --exclude=.github --exclude=tests --exclude=node_modules -cf - . | tar -xf - -C "$RUNNER_TEMP/staging-site"
           printf '%s\n' 'STAGING ONLY - Progress 3.0' > "$RUNNER_TEMP/staging-site/STAGING.txt"
@@ -46,7 +46,7 @@ jobs:
           grep -q "key='moja-silownia-staging-progress3-v01'" "$RUNNER_TEMP/staging-site/modules/state-storage.js"
           grep -q 'createStateStorage(window.localStorage)' "$RUNNER_TEMP/staging-site/modules/bootstrap.js"
           # Service-worker caches are origin-wide; use a separate cache namespace.
-          sed -i 's/moja-silownia-shell-v40-progression-2.1.0-guardrails-20261123-musclemap-photoreal/moja-silownia-staging-progress3-shell-v2/g' "$RUNNER_TEMP/staging-site/sw.js"
+          sed -i 's/moja-silownia-shell-v41-progress-3.0.0/moja-silownia-staging-progress3-shell-v3/g' "$RUNNER_TEMP/staging-site/sw.js"
           sed -i "s/startsWith('moja-silownia-shell-')/startsWith('moja-silownia-staging-progress3-shell-')/g" "$RUNNER_TEMP/staging-site/sw.js"
           grep -q "startsWith('moja-silownia-staging-progress3-shell-')" "$RUNNER_TEMP/staging-site/sw.js"
           if grep -q "startsWith('moja-silownia-shell-')" "$RUNNER_TEMP/staging-site/sw.js"; then
