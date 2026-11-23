@@ -49,7 +49,7 @@ jobs:
           grep -q "key='moja-silownia-staging-progress3-v01'" "$RUNNER_TEMP/staging-site/modules/state-storage.js"
           grep -q 'createStateStorage(window.localStorage)' "$RUNNER_TEMP/staging-site/modules/bootstrap.js"
           # Service-worker caches are origin-wide; use a separate cache namespace.
-          sed -i 's/moja-silownia-shell-v41-progress-3.0.0/moja-silownia-staging-progress3-shell-v5/g' "$RUNNER_TEMP/staging-site/sw.js"
+          sed -i 's/moja-silownia-shell-v41-progress-3.0.0/moja-silownia-staging-progress3-shell-v6/g' "$RUNNER_TEMP/staging-site/sw.js"
           sed -i "s/startsWith('moja-silownia-shell-')/startsWith('moja-silownia-staging-progress3-shell-')/g" "$RUNNER_TEMP/staging-site/sw.js"
           grep -q "startsWith('moja-silownia-staging-progress3-shell-')" "$RUNNER_TEMP/staging-site/sw.js"
           if grep -q "startsWith('moja-silownia-shell-')" "$RUNNER_TEMP/staging-site/sw.js"; then
