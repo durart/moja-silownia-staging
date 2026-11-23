@@ -37,8 +37,6 @@ jobs:
           tar --exclude=.git --exclude=.github --exclude=tests --exclude=node_modules -cf - . | tar -xf - -C "$RUNNER_TEMP/staging-site"
           printf '%s\n' 'STAGING ONLY - Progress 3.0' > "$RUNNER_TEMP/staging-site/STAGING.txt"
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ${{ runner.temp }}/staging-site
