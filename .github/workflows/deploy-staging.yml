@@ -36,6 +36,15 @@ jobs:
           mkdir -p "$RUNNER_TEMP/staging-site"
           tar --exclude=.git --exclude=.github --exclude=tests --exclude=node_modules -cf - . | tar -xf - -C "$RUNNER_TEMP/staging-site"
           printf '%s\n' 'STAGING ONLY - Progress 3.0' > "$RUNNER_TEMP/staging-site/STAGING.txt"
+          # Prevent the staging application from reading or overwriting the production workout state.
+          find "$RUNNER_TEMP/staging-site" -type f \( -name '*.js' -o -name '*.html' \) -print0 | xargs -0 sed -i 's/moja-silownia-v01/moja-silownia-staging-progress3-v01/g'
+          if grep -R -l 'moja-silownia-v01' "$RUNNER_TEMP/staging-site" --include='*.js' --include='*.html'; then
+            echo 'Production storage key found in staging package' >&2
+            exit 1
+          fi
+          grep -q 'moja-silownia-staging-progress3-v01' "$RUNNER_TEMP/staging-site/index.html"
+          # Service-worker caches are origin-wide; use a separate cache namespace.
+          sed -i 's/moja-silownia-shell-v40-progression-2.1.0-guardrails-20261123-musclemap-photoreal/moja-silownia-staging-progress3-shell-v1/g' "$RUNNER_TEMP/staging-site/sw.js"
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
