@@ -44,7 +44,12 @@ jobs:
           fi
           grep -q 'moja-silownia-staging-progress3-v01' "$RUNNER_TEMP/staging-site/index.html"
           # Service-worker caches are origin-wide; use a separate cache namespace.
-          sed -i 's/moja-silownia-shell-v40-progression-2.1.0-guardrails-20261123-musclemap-photoreal/moja-silownia-staging-progress3-shell-v1/g' "$RUNNER_TEMP/staging-site/sw.js"
+          sed -i 's/moja-silownia-shell-v40-progression-2.1.0-guardrails-20261123-musclemap-photoreal/moja-silownia-staging-progress3-shell-v2/g' "$RUNNER_TEMP/staging-site/sw.js"
+          sed -i "s/startsWith('moja-silownia-shell-')/startsWith('moja-silownia-staging-progress3-shell-')/g" "$RUNNER_TEMP/staging-site/sw.js"
+          if grep -q "startsWith('moja-silownia-shell-')" "$RUNNER_TEMP/staging-site/sw.js"; then
+            echo 'Staging worker must not delete production caches' >&2
+            exit 1
+          fi
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
